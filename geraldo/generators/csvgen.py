@@ -1,5 +1,5 @@
 import datetime, csv
-from base import ReportGenerator
+from .base import ReportGenerator
 
 from geraldo.utils import get_attr_value, calculate_size
 from geraldo.widgets import Widget, Label, SystemField, ObjectValue
@@ -41,7 +41,7 @@ class CSVGenerator(ReportGenerator):
             self.first_row_with_column_names = first_row_with_column_names
 
         # Additional attributes
-        for k,v in kwargs.items():
+        for k,v in list(kwargs.items()):
             setattr(self, k, v)
 
     def start_writer(self, filename=None):
@@ -50,7 +50,7 @@ class CSVGenerator(ReportGenerator):
 
         filename = filename or self.filename
 
-        if isinstance(filename, basestring):
+        if isinstance(filename, str):
             filename = file(filename, 'w')
 
         # Default writer uses comma as separator and quotes only when necessary
@@ -91,7 +91,7 @@ class CSVGenerator(ReportGenerator):
         if self.first_row_with_column_names:
             cells = [(col.name or col.expression or col.attribute_name) for col in columns]
             for i in range(len(cells)):
-                if isinstance(cell[i], unicode):
+                if isinstance(cell[i], str):
                     cell[i] = cell[i].encode('utf-8')
 
             self.writer.writerow(cells)
@@ -115,7 +115,7 @@ class CSVGenerator(ReportGenerator):
                 widget.band = self.report.band_detail
                 widget.page = None
 
-                if isinstance(widget.text, unicode):
+                if isinstance(widget.text, str):
                     cells.append(widget.text.encode('utf-8'))
                 else:
                     cells.append(widget.text)

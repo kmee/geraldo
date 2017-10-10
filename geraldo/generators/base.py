@@ -11,6 +11,7 @@ from geraldo.cache import CACHE_BY_QUERYSET, CACHE_BY_RENDER, CACHE_DISABLED,\
         make_hash_key, get_cache_backend
 from geraldo.charts import BaseChart
 from geraldo.exceptions import AbortEvent
+import collections
 
 class ReportPage(GeraldoObject):
     rect = None
@@ -337,7 +338,7 @@ class ReportGenerator(GeraldoObject):
         # Calls the before_print event
         try:
             band.do_before_print(generator=self)
-        except AbortEvent, TypeError:
+        except AbortEvent as TypeError:
             return False
 
         # Sets the current object
@@ -836,16 +837,16 @@ class ReportGenerator(GeraldoObject):
         """Returns objects filtered in the current group or all if there is no
         group"""
 
-        filter_dict = dict([(group.attribute_name, value) for group, value in self._groups_working_values.items()])
+        filter_dict = dict([(group.attribute_name, value) for group, value in list(self._groups_working_values.items())])
 
         def filter_object(obj):
-            for k,v in filter_dict.items():
+            for k,v in list(filter_dict.items()):
                 if get_attr_value(obj, k) != v:
                     return False
 
             return obj
 
-        return filter(filter_object, self.report.queryset)
+        return list(filter(filter_object, self.report.queryset))
 
     # SubReports
 
@@ -925,12 +926,12 @@ class ReportGenerator(GeraldoObject):
 
         if buffer:
             # Write to file stream
-            if hasattr(self.filename, 'write') and callable(self.filename.write):
+            if hasattr(self.filename, 'write') and isinstance(self.filename.write, collections.Callable):
                 self.filename.write(buffer)
                 return True
 
             # Write to file path
-            elif isinstance(self.filename, basestring):
+            elif isinstance(self.filename, str):
                 fp = file(self.filename, 'w')
                 fp.write(buffer)
                 fp.close()

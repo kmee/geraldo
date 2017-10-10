@@ -14,7 +14,7 @@ from setuptools import setup
 # Importing geraldo.version.get_version here would cause an attempt to import
 # `reportlab` (via, e.g., geraldo.graphics, imported from geraldo.__init__).
 # So we execfile the module directly instead, since it has no dependencies.
-execfile(os.path.join(os.path.dirname(__file__), "geraldo", "version.py"))
+exec(compile(open(os.path.join(os.path.dirname(__file__), "geraldo", "version.py")).read(), os.path.join(os.path.dirname(__file__), "geraldo", "version.py"), 'exec'))
 
 setup(
     name = 'Geraldo',
