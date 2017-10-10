@@ -1,4 +1,4 @@
-import copy, types, new
+import copy, types
 
 try:
     set
